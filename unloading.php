@@ -18,7 +18,12 @@ $sheet->setCellValue('E1', 'Заполнено лекций');
 $sheet->setCellValue('F1', 'Добавлено презентаций');
 $sheet->setCellValue('G1', 'Добавлена информация о курсе');
 $sheet->getRowDimension(1)->setRowHeight(50);
-$sheet->getColumnDimension('B')->setWidth(70);
+$sheet->getColumnDimension('B')->setWidth(80);
+$sheet->getColumnDimension('C')->setWidth(30);
+$sheet->getColumnDimension('D')->setWidth(30);
+$sheet->getColumnDimension('E')->setWidth(30);
+$sheet->getColumnDimension('F')->setWidth(30);
+$sheet->getColumnDimension('G')->setWidth(30);
 
   $sql = "SELECT * FROM `teacher`";      #Получение данных из таблицы teacher
   $result = mysqli_query($dbo, $sql);
@@ -28,10 +33,20 @@ $sheet->getColumnDimension('B')->setWidth(70);
     echo print_r($data);
     echo '</pre>';
 
-$i = 2;
+  $i = 2;
   foreach ($data as $key => $value) {       #Заполнение поля Номер и поля ФИО
     $sheet->setCellValue('A'.$i, $i-1);
     $sheet->setCellValue('B'.$i, $value['first_name'].' '.$value['name'].' '.$value['last_name']);
+    $i += 1;   
+  }
+
+  $sql = "SELECT * FROM `kurs_info`";
+  $result = mysqli_query($dbo, $sql);
+  $data = mysqli_fetch_all($result, true);
+
+  $i = 2;
+  foreach ($data as $key => $value) {       #Заполнение поля Номер и поля ФИО
+    $sheet->setCellValue('C'.$i, $value['kurs_name']);
     $i += 1;   
   }
 
