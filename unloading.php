@@ -18,7 +18,7 @@ $sheet->setCellValue('E1', 'Заполнено лекций');
 $sheet->setCellValue('F1', 'Добавлено презентаций');
 $sheet->setCellValue('G1', 'Добавлена информация о курсе');
 $sheet->getRowDimension(1)->setRowHeight(50);
-$sheet->getColumnDimension('B')->setWidth(80);
+$sheet->getColumnDimension('B')->setWidth(70);
 $sheet->getColumnDimension('C')->setWidth(30);
 $sheet->getColumnDimension('D')->setWidth(30);
 $sheet->getColumnDimension('E')->setWidth(30);
@@ -27,29 +27,35 @@ $sheet->getColumnDimension('G')->setWidth(30);
 
   $sql = "SELECT * FROM `teacher`";      #Получение данных из таблицы teacher
   $result = mysqli_query($dbo, $sql);
-  $data = mysqli_fetch_all($result, true);
+  $teacher = mysqli_fetch_all($result, true);
 
-      echo '<pre>';       #Тестовый просмотр именованного массива $data
-    echo print_r($data);
-    echo '</pre>';
-
-  $i = 2;
-  foreach ($data as $key => $value) {       #Заполнение поля Номер и поля ФИО
-    $sheet->setCellValue('A'.$i, $i-1);
-    $sheet->setCellValue('B'.$i, $value['first_name'].' '.$value['name'].' '.$value['last_name']);
-    $i += 1;   
-  }
-
-  $sql = "SELECT * FROM `kurs_info`";
-  $result = mysqli_query($dbo, $sql);
-  $data = mysqli_fetch_all($result, true);
+   #echo '<pre>';       #Тестовый просмотр именованного массива $teacher
+   #echo print_r($teacher);
+   #echo '</pre>';
 
   $i = 2;
-  foreach ($data as $key => $value) {       #Заполнение поля Номер и поля ФИО
-    $sheet->setCellValue('C'.$i, $value['kurs_name']);
-    $i += 1;   
-  }
+  foreach ($teacher as $key => $value) {       
+    $sheet->setCellValue('A'.$i, $i-1);       #Заполнение поля Номер
 
+    $sheet->setCellValue('B'.$i, $value['first_name'].' '.$value['name'].' '.$value['last_name']);  #Заполнение поля ФИО
+
+    $teach_id = $value['id'];
+    $sql = "SELECT * FROM `kurs_info` WHERE `user_id` = $teach_id";         #Получение данных из таблицы kurs_info
+    $result = mysqli_query($dbo, $sql);
+    $kurs_info = mysqli_fetch_all($result, true);
+
+    $sheet->setCellValue('C'.$i, $kurs_info[0]['kurs_name']);     #Заполнение поля Курс  
+
+    $kurs_id = $kurs_info[0]['id'];
+    $sql = "SELECT * FROM `theme` WHERE `kurs_id` = $kurs_id";    #Получение данных из таблицы theme
+    $result = mysqli_query($dbo, $sql);
+    $theme = mysqli_fetch_all($result, true);
+
+    $sheet->setCellValue('D'.$i, count($theme));    #Заполнение поля Добавлено лекций 
+
+    $i += 1;
+
+  };
 
 
 $writer = new Xlsx($spreadsheet);

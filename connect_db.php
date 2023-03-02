@@ -14,5 +14,6 @@
   define('DB_NAME', 'sereegak_teacherr');
 
   $dbo = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-  if($dbo->connect_errno) exit('Ошибка подключения к БД');
-  $dbo->set_charset('utf8');
+  if ($dbo->connect_error) {
+    die('Connect Error (' . $dbo->connect_errno . ') ' . $dbo->connect_error);
+  }
