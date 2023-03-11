@@ -28,11 +28,7 @@ $sheet->getColumnDimension('G')->setWidth(30);
   $sql = "SELECT * FROM `teacher`";      #Получение данных из таблицы teacher
   $result = mysqli_query($dbo, $sql);
   $teacher = mysqli_fetch_all($result, true);
-
-   #echo '<pre>';       #Тестовый просмотр именованного массива $teacher
-   #echo print_r($teacher);
-   #echo '</pre>';
-
+  
   $i = 2;
   foreach ($teacher as $key => $value) {       
     $sheet->setCellValue('A'.$i, $i-1);       #Заполнение поля Номер
@@ -47,13 +43,41 @@ $sheet->getColumnDimension('G')->setWidth(30);
     $sheet->setCellValue('C'.$i, $kurs_info[0]['kurs_name']);     #Заполнение поля Курс  
 
     $kurs_id = $kurs_info[0]['id'];
-    $sql = "SELECT * FROM `theme` WHERE `kurs_id` = $kurs_id";    #Получение данных из таблицы theme
+    $sql = "SELECT * FROM `theme` WHERE `kurs_id` = $kurs_id";    #Получение данных из таблицы theme 
     $result = mysqli_query($dbo, $sql);
     $theme = mysqli_fetch_all($result, true);
 
     $sheet->setCellValue('D'.$i, count($theme));    #Заполнение поля Добавлено лекций 
 
-    
+      $co = 0;
+      foreach($theme as $key => $v){        #Подсчёт заполеных лекций  
+        if ($v['info'] !== NULL){
+          $co += 1;
+        }
+      }
+
+    $sheet->setCellValue('E'.$i, $co);          #Заполнение поля Заполнено лекций   
+
+    $co = 0;
+    foreach($theme as $key => $v){
+      $vid = $v['id'];
+      $sql = "SELECT * FROM `presentations` WHERE `kurs_id` = $vid";    #Получение данных из таблицы presentations 
+      $result = mysqli_query($dbo, $sql);
+      $presentations = mysqli_fetch_all($result, true);
+      $co += count($presentations);
+    }
+
+    $sheet->setCellValue('F'.$i, $co);  #Заполнение поля Добавлено презентаций 
+
+    $sql = "SELECT * FROM `teach_kurs` WHERE `status` = $kurs_id";       #Получение данных из таблицы teach_kurs
+    $result = mysqli_query($dbo, $sql);
+    $teach_kurs = mysqli_fetch_all($result, true);
+
+    if(empty($teach_kurs)) {
+      $sheet->setCellValue('G'.$i, 'Нет');           #Заполнение поля Добавлена информация о курсе
+    } else {
+      $sheet->setCellValue('G'.$i, 'Да');
+    }
 
     $i += 1;
 
