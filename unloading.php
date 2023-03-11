@@ -53,6 +53,8 @@ $sheet->getColumnDimension('G')->setWidth(30);
 
     $sheet->setCellValue('D'.$i, count($theme));    #Заполнение поля Добавлено лекций 
 
+    
+
     $i += 1;
 
   };
